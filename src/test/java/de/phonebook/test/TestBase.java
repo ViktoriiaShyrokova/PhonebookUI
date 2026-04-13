@@ -4,6 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -11,12 +12,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import java.time.Duration;
+import java.util.List;
 
 public class TestBase {
     WebDriver driver;
 
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.get("https://telranedu.web.app/home");
@@ -25,22 +27,24 @@ public class TestBase {
     }
 
     @AfterMethod(enabled = false)
-    public void tearDown(){
-        if(driver != null) driver.quit();
+    public void tearDown() {
+        if (driver != null) driver.quit();
     }
 
-    public boolean isHomeComponentPresent(){
+    public boolean isHomeComponentPresent() {
         return !driver.findElements(By.xpath("//div[2]//h1")).isEmpty();
     }
 
-    public boolean isElementPresent(By locator){
+    public boolean isElementPresent(By locator) {
         return !driver.findElements(locator).isEmpty();
     }
 
     public void type(By locator, String text) {
-        click(locator);
-        driver.findElement(locator).clear();
-        driver.findElement(locator).sendKeys(text);
+        if (text != null) {
+            click(locator);
+            driver.findElement(locator).clear();
+            driver.findElement(locator).sendKeys(text);
+        }
     }
 
     public void click(By locator) {
@@ -51,6 +55,67 @@ public class TestBase {
         Alert alert = new WebDriverWait(driver, Duration.ofSeconds(20))
                 .until(ExpectedConditions.alertIsPresent());
         return alert != null;
+    }
+
+    public boolean isSignOutLinkPresent() {
+        return isElementPresent(By.xpath("//*[.='Sign Out']"));
+    }
+
+    public void clickOnRegistrationButton() {
+        click(By.name("registration"));
+    }
+
+    public void fillLoginRegisterForm(User user) {
+        type(By.name("email"), user.getEmail());
+        type(By.name("password"), user.getPassword());
+    }
+
+    public void clickOnLoginLink() {
+        click(By.cssSelector("[href='/login']"));
+    }
+
+    public void clickOnLoginButton() {
+        click(By.name("login"));
+    }
+
+    public void clickOnSaveButton() {
+        click(By.xpath("//button[.='Save']"));
+    }
+
+    public void fillAddContactForm(Contact contact) {
+        type(By.xpath("//input[1]"), contact.getName());
+        type(By.xpath("//input[2]"), contact.getLastName());
+        type(By.xpath("//input[3]"), contact.getPhone());
+        type(By.xpath("//input[4]"), contact.getEmail());
+        type(By.xpath("//input[5]"), contact.getAddress());
+        type(By.xpath("//input[6]"), contact.getDescription());
+    }
+
+    public void clickOnAddLink() {
+        click(By.cssSelector("[href='/add']"));
+    }
+
+    public boolean verifyByName(String text) {
+        List<WebElement> contacts = driver.findElements(By.cssSelector("h2"));
+        return contacts.getLast().getText().trim().equals(text);
+        // return contacts.stream().anyMatch(e -> e.getText().contains(text));
+    }
+
+    public void removeContact() {
+        click(By.className("contact-item_card__2SOIM"));
+        click(By.xpath("//button[.='Remove']"));
+    }
+
+    public int sizeOfContacts() {
+        return driver.findElements(By.className("contact-item_card__2SOIM")).size();
+    }
+
+    public void pause(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 //  bob@gmail.test
