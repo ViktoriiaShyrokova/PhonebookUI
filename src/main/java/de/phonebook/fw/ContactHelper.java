@@ -32,7 +32,11 @@ public class ContactHelper extends BaseHelper {
     }
 
     public boolean verifyByName(String text) {
-        List<WebElement> contacts = driver.findElements(By.cssSelector("h2"));
+        return verifyText(text, By.cssSelector("h2"));
+        // return contacts.stream().anyMatch(e -> e.getText().contains(text));
+    }
+    public boolean verifyText(String text, By locator) {
+        List<WebElement> contacts = driver.findElements(locator);
         return contacts.getLast().getText().trim().equals(text);
         // return contacts.stream().anyMatch(e -> e.getText().contains(text));
     }
@@ -44,5 +48,9 @@ public class ContactHelper extends BaseHelper {
 
     public int sizeOfContacts() {
         return driver.findElements(By.className("contact-item_card__2SOIM")).size();
+    }
+
+    public boolean verifyByPhone(String phone) {
+        return verifyText(phone, By.cssSelector("h3"));
     }
 }
