@@ -50,6 +50,7 @@ public class BaseHelper {
         }
 
     }
+
     public String takeScreenshot(){
         File tmp = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         File screen = new File("screenshots/screen-" + System.currentTimeMillis() + ".png");
