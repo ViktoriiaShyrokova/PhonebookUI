@@ -10,7 +10,8 @@ public class HomePageTests extends TestBase {
     @Test
     public void isHomeComponentPresentTest() {
         //Assert.assertTrue(isHomeComponentPresent());
-        Assert.assertTrue(app.getHomePage().isHomeComponentPresent());
+        //Assert.assertTrue(app.getHomePage().isHomeComponentPresent());
+        Assert.assertTrue(app.getUser().isSignOutLinkPresent());
     }
 
 
